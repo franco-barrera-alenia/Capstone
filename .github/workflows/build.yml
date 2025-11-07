@@ -14,6 +14,7 @@ jobs:
       ECR_REPOSITORY_CLIENT: capstone/client-service
       ECR_REPOSITORY_ACCOUNT: capstone/account-service
       IMAGE_TAG: latest
+      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
     steps:
       # 1. Check out the code
@@ -44,8 +45,6 @@ jobs:
       
       # 5. Build and push Docker image
       - name: Build and push Docker image to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       - name: Build and push Docker image api-gateway
         run: |
           # Build the image api-gateway
