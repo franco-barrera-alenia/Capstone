@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.clientService.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.clientService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.clientService.name }}
+    spec:
+      containers:
+        - name: client-service
+          image: "{{ .Values.image.registry }}/capstone/client-service:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.clientService.port }}
+          env:
+            - name: KEYCLOAK_URL
+              value: "{{ .Values.clientService.keycloakUrl }}"

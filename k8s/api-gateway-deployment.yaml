@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: 060351708029.dkr.ecr.eu-west-3.amazonaws.com/capstone/api-gateway:latest
+          image: 060351708029.dkr.ecr.eu-north-1.amazonaws.com/capstone/api-gateway:latest
           ports:
             - containerPort: 8083
           envFrom:

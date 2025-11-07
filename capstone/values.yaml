@@ -1,0 +1,21 @@
+image:
+  registry: 060351708029.dkr.ecr.eu-north-1.amazonaws.com
+  tag: latest
+
+apiGateway:
+  name: api-gateway
+  port: 8083
+  serviceType: LoadBalancer
+  keycloakIssuer: "https://capstone-keycloak.duckdns.org/realms/training-realm"
+
+clientService:
+  name: client-service
+  port: 8081
+  serviceType: ClusterIP
+  keycloakUrl: "https://capstone-keycloak.duckdns.org"
+
+accountService:
+  name: account-service
+  port: 8082
+  serviceType: ClusterIP
+  keycloakUrl: "https://capstone-keycloak.duckdns.org"
