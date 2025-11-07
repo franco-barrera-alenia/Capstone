@@ -47,8 +47,8 @@ jobs:
       - name: Build and push Docker image api-gateway
         run: |
           # Build the image api-gateway
-          mvn clean package -DskipTests
           cd api-gateway
+          mvn clean package -DskipTests
           docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY_API }}:${{ env.IMAGE_TAG }} .
           # Push the image
           docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY_API }}:${{ env.IMAGE_TAG }}
@@ -56,8 +56,8 @@ jobs:
       - name: Build and push Docker image client-service
         run: |
           # Build the image client-service
-          mvn clean package -DskipTests
           cd client-service
+          mvn clean package -DskipTests
           docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY_CLIENT }}:${{ env.IMAGE_TAG }} .
           # Push the image
           docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY_CLIENT }}:${{ env.IMAGE_TAG }}
