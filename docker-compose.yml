@@ -1,0 +1,41 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak
+    ports:
+      - "8083:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_URL: http://localhost:8083
+    command: start-dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: capstone-redis
+    ports:
+      - "6379:6379"
+
+  client-service:
+    build: ./client-service
+    container_name: capstone-client-service
+    ports:
+      - "8081:8081"
+  account-service:
+    build: ./account-service
+    container_name: capstone-account-service  
+    ports:
+      - "8082:8082"
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: capstone-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_REDIS_HOST: localhost
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://host.docker.internal:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://host.docker.internal:8082
+    depends_on:
+      - redis
+      - keycloak
