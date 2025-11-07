@@ -1,0 +1,64 @@
+name: CI/CD Account Service
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-north-1
+      ECR_REPOSITORY_API: capstone/api-gateway
+      ECR_REPOSITORY_CLIENT: capstone/client-service
+      ECR_REPOSITORY_ACCOUNT: capstone/account-service
+      IMAGE_TAG: latest
+
+    steps:
+      # 1. Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Java and Docker
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Authenticate to AWS
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 4. Log in to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      # 5. Build and push Docker image
+      - name: Build and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          # Build the image api-gateway
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY_API }}:${{ env.IMAGE_TAG }} .
+          # Push the image
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY_API }}:${{ env.IMAGE_TAG }}
+
+          # Build the image client-service
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY_CLIENT }}:${{ env.IMAGE_TAG }} .
+          # Push the image
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY_CLIENT }}:${{ env.IMAGE_TAG }}
+
+          # Build the image account-service
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY_ACCOUNT }}:${{ env.IMAGE_TAG }} .
+          # Push the image
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY_ACCOUNT }}:${{ env.IMAGE_TAG }}
+
