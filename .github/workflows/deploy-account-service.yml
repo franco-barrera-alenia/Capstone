@@ -59,7 +59,7 @@ jobs:
       # 7. Update kubeconfig to access EKS cluster
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --region $AWS_REGION --name <NOMBRE_DEL_CLUSTER>
+          aws eks update-kubeconfig --region $AWS_REGION --name capstone-cluster
 
       # 8. Deploy to EKS
       - name: Deploy account-service to EKS
