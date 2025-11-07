@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
@@ -9,6 +11,11 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME_URL: http://localhost:8083
     command: start-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -21,21 +28,31 @@ services:
     container_name: capstone-client-service
     ports:
       - "8081:8081"
+    depends_on:
+      - keycloak
+
   account-service:
     build: ./account-service
-    container_name: capstone-account-service  
+    container_name: capstone-account-service
     ports:
       - "8082:8082"
+    depends_on:
+      - keycloak
 
   api-gateway:
     build: ./api-gateway
     container_name: capstone-api-gateway
     ports:
       - "8080:8080"
-    environment:
-      SPRING_REDIS_HOST: localhost
-      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://host.docker.internal:8081
-      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://host.docker.internal:8082
     depends_on:
       - redis
       - keycloak
+      - client-service
+      - account-service
+    environment:
+      SPRING_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://client-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://account-service:8082
+      OAUTH_ISSUER_URI: http://keycloak:8080/realms/banking-lab
