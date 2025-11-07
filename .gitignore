@@ -1,0 +1,59 @@
+# --- IDEs ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# --- Build / Maven ---
+target/
+out/
+build/
+
+# --- Logs y temporales ---
+*.log
+*.tmp
+*.swp
+*.bak
+*.class
+
+# --- Sistema operativo ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Docker ---
+*.pid
+*.seed
+.dockerignore
+
+# --- Spring Boot ---
+*.war
+*.jar
+*.original
+BOOT-INF/
+META-INF/
+
+# --- Terraform ---
+terraform.tfstate
+terraform.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+*.tfvars
+*.auto.tfvars
+
+# --- Environment / Secrets ---
+.env
+.env.*
+*.secret
+*.key
+
+# --- Node/npm ---
+node_modules/
+npm-debug.log*
+
+# --- Otros ---
+api-gateway 2/        # carpeta errónea o residual
+keycloak/data/
+keycloak/themes/
+*.zip

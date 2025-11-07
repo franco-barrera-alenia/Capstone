@@ -1,0 +1,34 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: client-service
+              uri: http://client-service:8081
+              predicates:
+                - Path=/api/clients/**
+              filters:
+                - StripPrefix=1
+            - id: account-service
+              uri: http://account-service:8082
+              predicates:
+                - Path=/api/accounts/**
+              filters:
+                - StripPrefix=1
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods: "*"
+                allowedHeaders: "*"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/banking-lab
